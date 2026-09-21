@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include <fstream>
+
 
 using namespace std;
 
@@ -81,7 +83,9 @@ void NewPipe(Pipe& p)
 	}
 	p.remont = repair;
 }
+
 //Ошибки (КС)
+
 void NewCS(CS& s)
 {
 	cout << "Введите название КС :";
@@ -184,33 +188,44 @@ void EditCS(CS& s)
 		cout << "Некорректная команда\n";
 }
 
+//Сохранение в файл data.txt
 
+void SaveFile(const Pipe& p, const CS& s)
+{
+	ofstream f("data.txt"); //Поток вывода в файл
+	if (!f.is_open())   //Если файл не открылся
+	{
+		cout << "Ошибка открытия файла для записи\n";
+		return;
+	}
+	f << p.name << "\n" << p.d << "\n" << p.length << "\n" << p.remont << "\n";
+	f << s.name << "\n" << s.workshop << "\n" << s.activworkshop << "\n" << s.class_station << "\n";
+	f.close();
+	cout << "Данные сохранены в data.txt\n";
+}
 
+//Загрузка данных из файла
 
+void LoadFile(Pipe& p, CS& s)
+{
+	ifstream f("data.txt");  //Чтение файла
+	if (!f.is_open())  //Если файл не открылся
+	{
+		cout << "Файл не найден\n";
+		return;
+	}
+	f >> p.name >> p.d >> p.length >> p.remont;
+	f >> s.name >> s.workshop >> s.activworkshop >> s.class_station;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	if (f.fail())
+	{
+		cout << "Ошибка чтения данных из файла\n";
+		f.close();
+		return;
+	}
+	f.close();
+	cout << "Данные загружены\n";
+}
 
 //Добавление объектов 
 
@@ -220,45 +235,31 @@ int main()
 
 	Pipe p;
 	CS s;
-
-	menu();
-
 	int choice;
-	cin >> choice;
 
-	switch (choice)
+	while (true)
 	{
-	case 1:
-	{
-		NewPipe(p);
-		break;
+		menu();
+		cout << "Выберите действие: ";
+		choice = VvodChisla();
+
+		while (choice < 0 || choice > 7)
+		{
+			cout << "Ошибка, введите число от 0 до 7: ";
+			choice = VvodChisla();
+		}
+		switch (choice)
+		{
+		case 1: NewPipe(p); break;
+		case 2: NewCS(s); break;
+		case 3: ShowAll(p, s); break;
+		case 4: EditPipe(p); break;
+		case 5: EditCS(s); break;
+		case 6: SaveFile(p, s); break;
+		case 7: LoadFile(p, s); break;
+		case 0:
+			cout << "Выход из программы\n";
+			return 0;
+		}
 	}
-	case 2:
-	{
-		NewCS(s);
-		break;
-	}
-	case 3:
-
-		break;
-	case 4:
-
-		break;
-	case 5:
-
-		break;
-	case 6:
-
-		break;
-	case 7:
-
-		break;
-	case 8:
-
-		break;
-
-
-	}
-	return 0;
 }
-
