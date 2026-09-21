@@ -72,14 +72,14 @@ void NewPipe(Pipe& p)
 		cin >> p.length;
 	}
 	int repair;
-    cout << "Труба в ремонте? (1 - да, 0 - нет): ";
-    repair = VvodChisla();
-    while (repair != 0 && repair != 1)
-    {
-        cout << "Ошибка, введите 0 или 1: ";
-        repair = VvodChisla();
-    }
-    p.remont = repair;
+	cout << "Труба в ремонте? (1 - да, 0 - нет): ";
+	repair = VvodChisla();
+	while (repair != 0 && repair != 1)
+	{
+		cout << "Ошибка, введите 0 или 1: ";
+		repair = VvodChisla();
+	}
+	p.remont = repair;
 }
 //Ошибки (КС)
 void NewCS(CS& s)
@@ -107,7 +107,7 @@ void NewCS(CS& s)
 		cout << "Ошибка, класс станции должен быть 6 или 7: ";
 		s.class_station = VvodChisla();
 	}
-	
+
 }
 
 //Просмотр объектов для трубы и КС
@@ -163,7 +163,7 @@ void EditCS(CS& s)
 		if (s.activworkshop < s.workshop)  // Проверка, есть ли свободные цеха
 		{
 			// Запускаем ещё один
-			s.activworkshop++;             
+			s.activworkshop++;
 			cout << "Цех запущен. В работе: " << s.activworkshop << " из " << s.workshop << "\n";
 		}
 		else
@@ -214,10 +214,10 @@ void EditCS(CS& s)
 
 //Добавление объектов 
 
-int main() 
+int main()
 {
 	setlocale(LC_ALL, "RU"); //Поддержка русского языка
-	
+
 	Pipe p;
 	CS s;
 
@@ -228,36 +228,36 @@ int main()
 
 	switch (choice)
 	{
-		case 1:
-		{	
-			NewPipe(p);
-			break;
-		}
-		case 2:
-		{
-			NewCS(s);
-			break;
-		}
-		case 3:
+	case 1:
+	{
+		NewPipe(p);
+		break;
+	}
+	case 2:
+	{
+		NewCS(s);
+		break;
+	}
+	case 3:
 
-			break;
-		case 4:
+		break;
+	case 4:
 
-			break;
-		case 5:
+		break;
+	case 5:
 
-			break;
-		case 6:
+		break;
+	case 6:
 
-			break;
-		case 7:
+		break;
+	case 7:
 
-			break;
-		case 8:
+		break;
+	case 8:
 
-			break;
+		break;
 
-			
+
 	}
 	return 0;
 }
