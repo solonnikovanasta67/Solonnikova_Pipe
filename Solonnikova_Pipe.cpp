@@ -5,6 +5,7 @@
 
 #include <fstream>
 
+#include <windows.h>
 
 using namespace std;
 
@@ -229,8 +230,12 @@ void LoadFile(Pipe& p, CS& s)
 
 int main()
 {
-	setlocale(LC_ALL, "RU"); //Поддержка русского языка
-
+	//Поддержка русского при вводе, выводе
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
+	setlocale(LC_ALL, "Russian");
+	
+	
 	Pipe p;
 	CS s;
 	int choice;
