@@ -44,7 +44,7 @@ int VvodChisla()
 	while (cin.fail())
 	{
 		cin.clear();
-		cin.ignore(1000, '\n');
+		cin.ignore(10000000, '\n');
 		cout << "Ошибка, введите число: ";
 		cin >> chislo;
 	}
@@ -69,7 +69,7 @@ void NewPipe(Pipe& p)
 	while (cin.fail() || p.length <= 0)
 	{
 		cin.clear();
-		cin.ignore(1000, '\n');
+		cin.ignore(10000000, '\n');
 		cout << "Ошибка, длина должна быть больше 0: ";
 		cin >> p.length;
 	}
@@ -188,43 +188,41 @@ void EditCS(CS& s)
 		cout << "Некорректная команда\n";
 }
 
-//Сохранение в файл data.txt
+//Сохранение в файл 
 
 void SaveFile(const Pipe& p, const CS& s)
 {
-	ofstream f("data.txt"); //Поток вывода в файл
-	if (!f.is_open())   //Если файл не открылся
+	ofstream fout("f.txt"); //Вывод в файл
+
+	if (!fout) //Если файл не открылся
 	{
 		cout << "Ошибка открытия файла для записи\n";
 		return;
 	}
-	f << p.name << "\n" << p.d << "\n" << p.length << "\n" << p.remont << "\n";
-	f << s.name << "\n" << s.workshop << "\n" << s.activworkshop << "\n" << s.class_station << "\n";
-	f.close();
-	cout << "Данные сохранены в data.txt\n";
+
+	fout << p.name << "\n" << p.d << "\n" << p.length << "\n" << p.remont << "\n";
+	fout << s.name << "\n" << s.workshop << "\n" << s.activworkshop << "\n" << s.class_station << "\n";
+
+	fout.close();
+	cout << "Данные сохранены в f.txt\n";
 }
 
 //Загрузка данных из файла
 
 void LoadFile(Pipe& p, CS& s)
 {
-	ifstream f("data.txt");  //Чтение файла
-	if (!f.is_open())  //Если файл не открылся
+	ifstream fin ("f.txt");  //Чтение файла
+	if (!fin)  //Если файл не открылся
+
 	{
 		cout << "Файл не найден\n";
 		return;
 	}
-	f >> p.name >> p.d >> p.length >> p.remont;
-	f >> s.name >> s.workshop >> s.activworkshop >> s.class_station;
+	fin >> p.name >> p.d >> p.length >> p.remont;
+	fin >> s.name >> s.workshop >> s.activworkshop >> s.class_station;
 
-	if (f.fail())
-	{
-		cout << "Ошибка чтения данных из файла\n";
-		f.close();
-		return;
-	}
-	f.close();
-	cout << "Данные загружены\n";
+	fin.close();
+	cout << "Данные загружены из f.txt\n";
 }
 
 //Добавление объектов 
