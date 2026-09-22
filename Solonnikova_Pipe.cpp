@@ -56,7 +56,7 @@ int VvodChisla()
 void NewPipe(Pipe& p)
 {
 	cout << "Введите название трубы :";
-	cin >> p.name;
+	getline(cin >> ws, p.name);
 	cout << "Введите диаметр трубы:";
 	p.d = VvodChisla();
 	while (p.d <= 0)
@@ -90,7 +90,7 @@ void NewPipe(Pipe& p)
 void NewCS(CS& s)
 {
 	cout << "Введите название КС :";
-	cin >> s.name;
+	getline(cin >> ws, s.name);
 	cout << "Введите количество цехов:";
 	s.workshop = VvodChisla();
 	while (s.workshop <= 0)
@@ -219,7 +219,11 @@ void LoadFile(Pipe& p, CS& s)
 		cout << "Файл не найден\n";
 		return;
 	}
+	
+	getline(fin >> ws, p.name);
 	fin >> p.name >> p.d >> p.length >> p.remont;
+	
+	getline(fin >> ws, s.name);
 	fin >> s.name >> s.workshop >> s.activworkshop >> s.class_station;
 
 	fin.close();
