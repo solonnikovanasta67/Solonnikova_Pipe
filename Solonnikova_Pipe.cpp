@@ -1,15 +1,10 @@
-﻿
-#include <iostream>
-
+﻿#include <iostream>
 #include <string>
-
 #include <fstream>
-
 #include <windows.h>
 
 using namespace std;
 
-//Структура трубы
 
 struct Pipe
 {
@@ -20,7 +15,6 @@ struct Pipe
 };
 
 
-//Структура КС
 
 struct CS
 {
@@ -30,29 +24,26 @@ struct CS
 	int class_station;
 };
 
-//Создаем меню
 void menu()
 {
 	cout << "1.Добавление трубы\n" << "2.Добавление КС\n" << "3.Просмотр объектов для трубы и КС\n" << "4.Редактирование трубы\n" << "5.Редактирование КС\n" << "6.Сохранение\n" << "7.Загрузка\n" << "0.Выход\n";
 }
 
-//Защита от некорректного ввода 
 
 int VvodChisla()
 {
-	int chislo;
-	cin >> chislo;
-	while (cin.fail())
+	int number; cin >> number;
+	while (cin.fail() || cin.peek() != '\n')
 	{
-		cin.clear();
-		cin.ignore(10000000, '\n');
-		cout << "Ошибка, введите число: ";
-		cin >> chislo;
+			cin.clear();
+			cin.ignore(100, '\n');
+
+			cout << "Ошибка. Введите целое число: ";
+			cin >> number;
 	}
-	return chislo;
+	return number;
 }
 
-//Ошибки (труба)
 void NewPipe(Pipe& p)
 {
 	cout << "Введите название трубы :";
@@ -64,16 +55,16 @@ void NewPipe(Pipe& p)
 		cout << "Ошибка, диаметр должен быть больше 0: ";
 		p.d = VvodChisla();
 	}
+	
+	cout << "Введите длину трубы: ";
+	p.length = VvodChisla();
 
-	cout << "Введите длину трубы :";
-	cin >> p.length;
-	while (cin.fail() || p.length <= 0)
+	while (p.length <= 0)
 	{
-		cin.clear();
-		cin.ignore(10000000, '\n');
 		cout << "Ошибка, длина должна быть больше 0: ";
-		cin >> p.length;
+		p.length = VvodChisla();
 	}
+
 	int repair;
 	cout << "Труба в ремонте? (1 - да, 0 - нет): ";
 	repair = VvodChisla();
@@ -85,7 +76,6 @@ void NewPipe(Pipe& p)
 	p.remont = repair;
 }
 
-//Ошибки (КС)
 
 void NewCS(CS& s)
 {
@@ -115,28 +105,41 @@ void NewCS(CS& s)
 
 }
 
-//Просмотр объектов для трубы и КС
 
-void ShowAll(const Pipe& p, const CS& s)
+
+void ShowPipe(const Pipe& p)
 {
-	if (p.name.empty()) //Пусто
+	if (p.name.empty()) 
 		cout << "Труба не создана\n";
 	else
 		cout << "Труба: " << p.name << " | диаметр=" << p.d << " | длина=" << p.length
 		<< " | в ремонте=" << (p.remont ? "да" : "нет") << "\n";
+}
 
-	if (s.name.empty()) //Пусто
+
+
+void ShowCS(const CS& s)
+{
+	if (s.name.empty()) 
 		cout << "КС не создана\n";
 	else
 		cout << "КС: " << s.name << " | цехов=" << s.workshop << " | в работе=" << s.activworkshop
 		<< " | класс=" << s.class_station << "\n";
 }
 
-// Редактирование признака "в ремонте" для трубы
+
+
+void ShowAll(const Pipe& p, const CS& s)
+{
+	ShowPipe(p);
+	ShowCS(s);
+}
+
+
 
 void EditPipe(Pipe& p)
 {
-	if (p.name.empty()) //Пусто
+	if (p.name.empty()) 
 	{
 		cout << "Труба не создана\n";
 		return;
@@ -151,7 +154,6 @@ void EditPipe(Pipe& p)
 	p.remont = repair;
 }
 
-// Запуск и останов цеха в КС
 
 void EditCS(CS& s)
 {
@@ -165,9 +167,8 @@ void EditCS(CS& s)
 
 	if (c == 6)
 	{
-		if (s.activworkshop < s.workshop)  // Проверка, есть ли свободные цеха
+		if (s.activworkshop < s.workshop)  
 		{
-			// Запускаем ещё один
 			s.activworkshop++;
 			cout << "Цех запущен. В работе: " << s.activworkshop << " из " << s.workshop << "\n";
 		}
@@ -176,9 +177,9 @@ void EditCS(CS& s)
 	}
 	else if (c == 7)
 	{
-		if (s.activworkshop > 0)  // Проверка, есть хоть один работающий
+		if (s.activworkshop > 0)  
 		{
-			// Останавливаем
+			
 			s.activworkshop--;
 			cout << "Цех остановлен. В работе: " << s.activworkshop << " из " << s.workshop << "\n";
 		}
@@ -189,59 +190,83 @@ void EditCS(CS& s)
 		cout << "Некорректная команда\n";
 }
 
-//Сохранение в файл 
 
-void SaveFile(const Pipe& p, const CS& s)
+void SavePipe(ofstream& fout, const Pipe& p)
 {
-	ofstream fout("f.txt"); //Вывод в файл
+	if (p.name.empty())
+		fout << "Net" << "\n" << 0 << "\n" << 0 << "\n" << 0 << "\n";
+	else
+		fout << p.name << "\n" << p.d << "\n" << p.length << "\n" << p.remont << "\n";
+}
 
-	if (!fout) //Если файл не открылся
+
+void SaveCS(ofstream& fout, const CS& s)
+{
+	if (s.name.empty())
+		fout << "Net" << "\n" << 0 << "\n" << 0 << "\n" << 0 << "\n";
+	else
+		fout << s.name << "\n" << s.workshop << "\n" << s.activworkshop << "\n" << s.class_station << "\n";
+}
+
+void SaveFile(const Pipe& p, const CS& s) {
+	ofstream fout("f.txt"); 
+
+	if (!fout) 
 	{
 		cout << "Ошибка открытия файла для записи\n";
 		return;
 	}
 
-	fout << p.name << "\n" << p.d << "\n" << p.length << "\n" << p.remont << "\n";
-	fout << s.name << "\n" << s.workshop << "\n" << s.activworkshop << "\n" << s.class_station << "\n";
+	SavePipe(fout, p);
+	SaveCS(fout, s);
 
-	fout.close();
 	cout << "Данные сохранены в f.txt\n";
 }
 
-//Загрузка данных из файла
+
+
+void LoadPipe(ifstream& fin, Pipe& p)
+{
+	getline(fin >> ws, p.name);
+	fin >> p.d >> p.length >> p.remont;
+	if (p.name == "Net")
+		p.name = "";
+}
+
+void LoadCS(ifstream& fin, CS& s)
+{
+	getline(fin >> ws, s.name);
+	fin >> s.workshop >> s.activworkshop >> s.class_station;
+	if (s.name == "Net")
+		s.name = "";
+}
 
 void LoadFile(Pipe& p, CS& s)
 {
-	ifstream fin ("f.txt");  //Чтение файла
-	if (!fin)  //Если файл не открылся
-
+	ifstream fin("f.txt");  
+	if (!fin)  
 	{
 		cout << "Файл не найден\n";
 		return;
 	}
-	
-	getline(fin >> ws, p.name);
-	fin >> p.name >> p.d >> p.length >> p.remont;
-	
-	getline(fin >> ws, s.name);
-	fin >> s.name >> s.workshop >> s.activworkshop >> s.class_station;
 
-	fin.close();
+	LoadPipe(fin, p);
+	LoadCS(fin, s);
+
 	cout << "Данные загружены из f.txt\n";
 }
 
-//Добавление объектов 
 
 int main()
 {
-	//Поддержка русского при вводе, выводе
+	
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
 	setlocale(LC_ALL, "Russian");
 	
 	
-	Pipe p;
-	CS s;
+	Pipe p{};
+	CS s{};
 	int choice;
 
 	while (true)
