@@ -8,21 +8,45 @@ using namespace std;
 
 struct Pipe
 {
+	static int maxId;
+	int id;
 	string name;
 	int d;
 	double length;
 	bool remont;
+
+	Pipe()
+	{
+		id = ++maxId;  // сначала увеличили счётчик, потом взяли значение
+		d = 0;
+		length = 0;
+		remont = false;
+	}
 };
+
+int Pipe::maxId = 0;
 
 
 
 struct CS
 {
+	static int maxId;
+	int id;
 	string name;
 	int workshop;
 	int activworkshop;
 	int class_station;
+
+	CS()
+	{
+		id = ++maxId;
+		workshop = 0;
+		activworkshop = 0;
+		class_station = 0;
+	}
 };
+
+int CS::maxId = 0;
 
 void menu()
 {
@@ -112,7 +136,7 @@ void ShowPipe(const Pipe& p)
 	if (p.name.empty()) 
 		cout << "Труба не создана\n";
 	else
-		cout << "Труба: " << p.name << " | диаметр=" << p.d << " | длина=" << p.length
+		cout << "Труба id=" << p.id << " | " << p.name << " | диаметр=" << p.d << " | длина=" << p.length
 		<< " | в ремонте=" << (p.remont ? "да" : "нет") << "\n";
 }
 
@@ -120,13 +144,12 @@ void ShowPipe(const Pipe& p)
 
 void ShowCS(const CS& s)
 {
-	if (s.name.empty()) 
+	if (s.name.empty())
 		cout << "КС не создана\n";
 	else
-		cout << "КС: " << s.name << " | цехов=" << s.workshop << " | в работе=" << s.activworkshop
+		cout << "КС id=" << s.id << " | " << s.name << " | цехов=" << s.workshop << " | в работе=" << s.activworkshop
 		<< " | класс=" << s.class_station << "\n";
 }
-
 
 
 void ShowAll(const Pipe& p, const CS& s)
@@ -193,19 +216,20 @@ void EditCS(CS& s)
 
 void SavePipe(ofstream& fout, const Pipe& p)
 {
-	if (p.name.empty())
-		fout << "Net" << "\n" << 0 << "\n" << 0 << "\n" << 0 << "\n";
-	else
-		fout << p.name << "\n" << p.d << "\n" << p.length << "\n" << p.remont << "\n";
+	fout << p.name << "\n";
+	if (!p.name.empty())
+
+	fout << p.d << "\n" << p.length << "\n" << p.remont << "\n";
+
 }
 
 
 void SaveCS(ofstream& fout, const CS& s)
 {
-	if (s.name.empty())
-		fout << "Net" << "\n" << 0 << "\n" << 0 << "\n" << 0 << "\n";
-	else
-		fout << s.name << "\n" << s.workshop << "\n" << s.activworkshop << "\n" << s.class_station << "\n";
+	fout << s.name << "\n";
+	if (!s.name.empty())
+	
+    fout << s.workshop << "\n" << s.activworkshop << "\n" << s.class_station << "\n";
 }
 
 void SaveFile(const Pipe& p, const CS& s) {
@@ -227,20 +251,33 @@ void SaveFile(const Pipe& p, const CS& s) {
 
 void LoadPipe(ifstream& fin, Pipe& p)
 {
-	getline(fin >> ws, p.name);
-	fin >> p.d >> p.length >> p.remont;
-	if (p.name == "Net")
-		p.name = "";
+	getline(fin , p.name);
+	if (p.name.empty())
+	{
+		p = Pipe{};
+		cout << "Труба не создана\n";
+	}
+	else
+	{
+		fin >> p.d >> p.length >> p.remont;
+		fin.ignore(10000, '\n');
+	}
 }
 
 void LoadCS(ifstream& fin, CS& s)
 {
-	getline(fin >> ws, s.name);
-	fin >> s.workshop >> s.activworkshop >> s.class_station;
-	if (s.name == "Net")
-		s.name = "";
+	getline(fin, s.name);
+	if (s.name.empty())
+	{
+		s = CS{};
+		cout << "КС не создана\n";
+	}
+	else
+	{
+		fin >> s.workshop >> s.activworkshop >> s.class_station;
+		fin.ignore(10000, '\n'); 
+	}
 }
-
 void LoadFile(Pipe& p, CS& s)
 {
 	ifstream fin("f.txt");  
